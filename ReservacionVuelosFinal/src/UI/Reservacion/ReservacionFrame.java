@@ -115,7 +115,10 @@ public class ReservacionFrame extends JFrame {
             stmt.setInt(1, idVuelo);
             ResultSet rs = stmt.executeQuery();
 
-            seatsPanel.setLayout(new GridLayout(0, 6, 10, 10)); // Configuración del layout con 6 columnas
+            // Panel principal con GridLayout para separar las columnas
+            seatsPanel.setLayout(new GridLayout(0, 7, 10, 10)); // 7 columnas totales (3, espacio, 3)
+
+            int columnCounter = 0;
 
             while (rs.next()) {
                 String numeroAsiento = rs.getString("numeroAsiento");
@@ -146,7 +149,18 @@ public class ReservacionFrame extends JFrame {
                     seatButton.setEnabled(false);
                 }
 
-                seatsPanel.add(seatButton); // Agregar el botón al panel de asientos
+                // Agregar asiento al panel
+                if (columnCounter == 3) {
+                    seatsPanel.add(Box.createGlue()); // Espacio vacío en la columna 4
+                    columnCounter++;
+                }
+                seatsPanel.add(seatButton);
+                columnCounter++;
+
+                // Reiniciar contador después de llenar 7 columnas
+                if (columnCounter == 7) {
+                    columnCounter = 0;
+                }
             }
 
         } catch (Exception ex) {
@@ -154,6 +168,7 @@ public class ReservacionFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al cargar los asientos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void mostrarResumen() {
         new ResumenFrame(asientosSeleccionados, costoTotal, idVuelo);
